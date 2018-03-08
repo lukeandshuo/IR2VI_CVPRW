@@ -1,7 +1,7 @@
 import os.path
 import torchvision.transforms as transforms
 from data.base_dataset import BaseDataset, get_transform
-from data.image_folder import make_dataset
+from data.image_folder import make_dataset,make_img_dataset
 from PIL import Image
 import PIL
 import random
@@ -16,17 +16,19 @@ class UnalignedDataset(BaseDataset):
 
 
         ####TODO: note this is for sensiac night object detection
-        if opt.phase == 'translate':
-            name_list_dir = "/data/Sensiac/SensiacNight/Train_Test/IR/test.txt"
-            name_list = []
-            with open(name_list_dir,'r') as f:
-                for name in f:
-                    name = name.strip()
-                    name_list.append(os.path.join("/data/Sensiac/SensiacNight/Imagery/IR/images/",name+'.png'))
-            self.A_paths = name_list
+        if opt.phase == 'test':
+            # name_list_dir = "/data/Sensiac/SensiacNight/Train_Test/IR/test.txt"
+            # name_list = []
+            # with open(name_list_dir,'r') as f:
+            #     for name in f:
+            #         name = name.strip()
+            #         name_list.append(os.path.join("/data/Sensiac/SensiacNight/Imagery/IR/images/",name+'.png'))
+            # self.A_paths = name_list
+            src_dir = "/data/Sensiac/SensiacNight/I2I_OD_Night/Imagery/demo/images/"
+            self.A_paths = make_img_dataset(src_dir)
         else:
-            self.A_paths = make_dataset(self.dir_A)
-        self.B_paths = make_dataset(self.dir_B)
+            self.A_paths = make_img_dataset(self.dir_A)
+        self.B_paths = make_img_dataset(self.dir_B)
 
         self.A_paths = sorted(self.A_paths)
         self.B_paths = sorted(self.B_paths)
@@ -67,12 +69,16 @@ class UnalignedDataset(BaseDataset):
 
     def __getitem__(self, index):
 
-        index_A = index % self.A_size
-        A_path = self.A_paths[index_A]
+        if self.opt.serial_batches:
+            index_A = index % self.A_size
+        else:
+            index_A = random.randint(0, self.A_size - 1)
         if self.opt.serial_batches:
             index_B = index % self.B_size
         else:
             index_B = random.randint(0, self.B_size - 1)
+
+        A_path = self.A_paths[index_A]
         B_path = self.B_paths[index_B]
         # print('(A, B) = (%d, %d)' % (index_A, index_B))
 

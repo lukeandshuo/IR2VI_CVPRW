@@ -32,6 +32,18 @@ def make_dataset(dir):
             images.append(path)
 
     return images
+def make_img_dataset(dir):
+    images = []
+    assert os.path.isdir(dir), '%s is not a valid directory' % dir
+
+    for root, _, fnames in os.walk(dir):
+        for fname in fnames:
+            if is_image_file(fname):
+                path = os.path.join(root, fname)
+                images.append(path)
+
+    return images
+
 
 
 def default_loader(path):

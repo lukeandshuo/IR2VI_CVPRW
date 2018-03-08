@@ -6,6 +6,8 @@ from torch.autograd import Variable
 from torch.optim import lr_scheduler
 import numpy as np
 import matplotlib.pyplot as plt
+from util.visualizer import util
+import cv2
 ###############################################################################
 # Functions
 ###############################################################################
@@ -266,14 +268,22 @@ class ResnetGenerator(nn.Module):
         else:
             texture= self.model(input)
 
-        texture_img = texture.cpu().data.numpy()[0,0,:,:]
+        # texture_img = texture.cpu().data.numpy()[0,0,:,:]
+        texture_img= util.tensor2im(self.tanh_modul(texture).data)
+
        # plt.imshow(texture_img)
 
-        high_freq = self.skip_connection(input)
-        hf_img  = high_freq.cpu().data.numpy()[0,0,:,:]
+        contour = self.skip_connection(input)
+        contour_img = util.tensor2im(self.tanh_modul(contour).data)
+        # cv2.imwrite("/data/Sensiac/SensiacNight/I2I_OD_Night/Imagery/demo(out)/images/ir_texture.png",texture_img)
+        # cv2.imwrite("/data/Sensiac/SensiacNight/I2I_OD_Night/Imagery/demo(out)/images/ir_contour.png", contour_img)
+        # cv2.imshow("texture",texture_img)
+        # cv2.imshow('contour',contour_img)
+        # cv2.waitKey(1)
+        # contour_img  = contour.cpu().data.numpy()[0,0,:,:]
      #   plt.imshow(hf_img)
       #  plt.show()
-        output = high_freq+texture
+        output = contour+texture
         return self.tanh_modul(output)
 
 
