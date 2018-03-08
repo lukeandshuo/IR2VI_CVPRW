@@ -13,9 +13,9 @@ from torchvision import transforms
 import sys
 import cv2
 
-class CycleGANModel(BaseModel):
+class ROIFocalModel(BaseModel):
     def name(self):
-        return 'CycleGANModel'
+        return 'ROIFocalModel'
 
     def initialize(self, opt):
         BaseModel.initialize(self, opt)

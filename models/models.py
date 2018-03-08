@@ -2,10 +2,10 @@
 def create_model(opt):
     model = None
     print(opt.model)
-    if opt.model == 'cycle_gan':
+    if opt.model == 'IR2VI':
         assert(opt.dataset_mode == 'unaligned')
-        from .cycle_gan_model import CycleGANModel
-        model = CycleGANModel()
+        from .ROI_focal_model import ROIFocalModel
+        model = ROIFocalModel()
     elif opt.model == 'pix2pix':
         assert(opt.dataset_mode == 'aligned')
         from .pix2pix_model import Pix2PixModel
